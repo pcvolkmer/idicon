@@ -1,0 +1,41 @@
+= IdIcon
+
+Simple implementation of an identicon service.
+
+== Usage
+
+HTTP `GET` is used to request an identicon image.
+
+....
+curl http://localhost:8000/avatar/23463b99b62a72f26ed677cc556c44e8?s=100&c=v2
+....
+
+Instead of requesting identicons for MD5 hashes of usernames or mail addresses, it is possible to use plain username and mail address. The will result in the same generated identicon.
+
+Use request query parameter `s` to request images with specified size. Default value is 80px. The size is limited to a maximum value of 512px.
+Query parameter `c` will set color scheme. Available values are `v1` and `v2`.
+
+=== Server settings
+
+You can use `COLORSCHEME` in environment to define the default color scheme to be used. Fallback value will be `v2`.
+
+== Development and local start
+
+A *Golang* setup is required for development. File `idicon.go` contains the source code. Type
+
+....
+$ go run
+....
+
+to run the application on port 8000.
+
+=== Docker build
+
+Use `Dockerfile` to build a new image based on `scratch` image and start this image by typing
+
+....
+$ docker build -t idicon .
+$ docker run -p 8000:8000 idicon
+....
+
+This will build the image and will start a new container listening on port 8000 for requests.
