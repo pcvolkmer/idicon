@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"github.com/gorilla/mux"
 	"image"
 	"image/color"
 	"image/draw"
@@ -14,35 +13,49 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
-func colorV1(hash [16]byte) color.RGBA {
-	r := 32 + (hash[0]%16)/2<<4
-	g := 32 + (hash[2]%16)/2<<4
-	b := 32 + (hash[len(hash)-1]%16)/2<<4
-
-	if r > g && r > b {
-		r += 48
-	} else if g > r && g > b {
-		g += 48
-	} else if b > r && b > g {
-		b += 48
-	}
-	return color.RGBA{r, g, b, 255}
+// https://processing.org/reference/map_.html
+func remap(value uint32, vmin uint32, vmax uint32, dmin uint32, dmax uint32) float32 {
+	return float32((value-vmin)*(dmax-dmin)) / float32((vmax-vmin)+dmin)
 }
 
-func colorV2(hash [16]byte) color.RGBA {
-	var palette = []color.RGBA{
-		{0x3c, 0x38, 0x36, 0xff},
-		{0xcc, 0x24, 0x1d, 0xff},
-		{0x98, 0x97, 0x1a, 0xff},
-		{0xd7, 0x99, 0x21, 0xff},
-		{0x45, 0x85, 0x88, 0xff},
-		{0xb1, 0x62, 0x86, 0xff},
-		{0x68, 0x9d, 0x6a, 0xff},
-		{0xa8, 0x99, 0x84, 0xff},
+func nibbles(hash [16]byte) []byte {
+	nibbles := make([]byte, 32)
+
+	for i := 0; i <= 15; i++ {
+		nibbles[i*2+1] = hash[i] & 0x0f
+		nibbles[i*2] = hash[i] & 0xf0 >> 4
 	}
-	return palette[hash[15]%8]
+
+	return nibbles
+}
+
+// Based on https://github.com/dgraham/identicon
+func genGhIcon(id string, size int, f func([16]byte) color.RGBA) *image.NRGBA {
+	if size > 512 {
+		size = 512
+	}
+
+	blocks := 5
+
+	hash := hashBytes(id)
+	nibbles := nibbles(hash)
+	data := make([]bool, blocks*blocks)
+
+	for x := 0; x < blocks; x++ {
+		for y := 0; y < blocks; y++ {
+			ni := x + blocks*(blocks-y-1)
+			if x+blocks*y > 2*blocks {
+				di := (x + blocks*y) - 2*blocks
+				data[di] = nibbles[ni]%2 == 0
+			}
+		}
+	}
+
+	return drawImage(mirrorData(data, blocks), blocks, size, f(hash))
 }
 
 func genIdIcon(id string, size int, f func([16]byte) color.RGBA) *image.NRGBA {
@@ -123,16 +136,30 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 		colorScheme = os.Getenv("COLORSCHEME")
 	}
 
-	w.Header().Add("Content-Type", "image/png")
-	if colorScheme == "v1" {
-		err = png.Encode(w, genIdIcon(id, size, colorV1))
-	} else {
-		err = png.Encode(w, genIdIcon(id, size, colorV2))
+	pattern := r.URL.Query().Get("d")
+	if pattern == "" {
+		pattern = os.Getenv("PATTERN")
 	}
+
+	w.Header().Add("Content-Type", "image/png")
+	cFunc := colorV2
+	if colorScheme == "v1" {
+		cFunc = colorV1
+	} else if colorScheme == "gh" {
+		cFunc = colorGh
+	}
+
+	if pattern == "github" {
+		err = png.Encode(w, genGhIcon(id, size, cFunc))
+	} else {
+		err = png.Encode(w, genIdIcon(id, size, cFunc))
+	}
+
 }
 
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/avatar/{id}", RequestHandler)
+	log.Println("Starting ...")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
