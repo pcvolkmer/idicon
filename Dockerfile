@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine AS build-env
+FROM golang:1.17-alpine AS build-env
 
 ENV USER=appuser
 ENV UID=8000
@@ -23,10 +23,10 @@ FROM scratch
 
 COPY --from=build-env /etc/passwd /etc/passwd
 COPY --from=build-env /etc/group /etc/group
-COPY --from=build-env /tmp/build/app /usr/local/bin/idicon
+COPY --from=build-env /tmp/build/app /idicon
 
 USER appuser:appuser
 
 EXPOSE 8000
 
-ENTRYPOINT ["/usr/local/bin/idicon"]
+ENTRYPOINT ["/idicon"]
