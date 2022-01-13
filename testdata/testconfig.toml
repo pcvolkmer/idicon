@@ -1,0 +1,8 @@
+[defaults]
+color-scheme = "gh"
+
+[[users]]
+id = "example"
+alias = "42"
+color-scheme = "gh"
+pattern = "github"

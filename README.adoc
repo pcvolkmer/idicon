@@ -21,7 +21,36 @@ The request query parameter `d` can be used to request GitHub like patterns by s
 
 === Configuration
 
-Configuration is available by using environment variables.
+Configuration is available by using a config file or by using environment variables.
+
+==== Config file
+
+If config file `/etc/identicon/config.toml` exists, its configuration will be used on application start.
+
+Use application argument `-c` to use another file.
+....
+$ identicon -c ./config.toml
+....
+
+In addition to configuration for default values, the configuration file can also be used to create specific configs for users.
+
+....
+[defaults]
+color-scheme = "v2"     # Default color scheme
+
+[[users]]
+id = "me@example.com"   # The users ID in plain text
+alias = "42"            # The alias to be used, e.g. for mapping users to other IDs
+color-scheme = "gh"     # The color scheme to be used for this user
+pattern = "github"      # The pattern to be used for this user
+
+[[users]]
+...
+....
+
+If config file is not present, the application will ignore it. Using environment variables will override default settings.
+
+==== Environment Variables
 
 You can use `COLORSCHEME` to define the default color scheme to be used. Fallback value will be `v2`.
 

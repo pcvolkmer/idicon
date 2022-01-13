@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"flag"
 	"image"
 	"image/color"
 	"image/draw"
@@ -14,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/BurntSushi/toml"
 	"github.com/gorilla/mux"
 )
 
@@ -133,12 +135,24 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 
 	colorScheme := r.URL.Query().Get("c")
 	if colorScheme == "" {
-		colorScheme = os.Getenv("COLORSCHEME")
+		colorScheme = config.Defaults.ColorScheme
 	}
 
 	pattern := r.URL.Query().Get("d")
 	if pattern == "" {
-		pattern = os.Getenv("PATTERN")
+		pattern = config.Defaults.Pattern
+	}
+
+	for _, userConfig := range config.Users {
+		if hashBytes(id) == hashBytes(userConfig.Id) {
+			id = userConfig.Alias
+			if len(userConfig.ColorScheme) > 0 {
+				colorScheme = userConfig.ColorScheme
+			}
+			if len(userConfig.Pattern) > 0 {
+				pattern = userConfig.Pattern
+			}
+		}
 	}
 
 	w.Header().Add("Content-Type", "image/png")
@@ -157,7 +171,54 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+type Config struct {
+	Defaults Defaults     `toml:"defaults"`
+	Users    []UserConfig `toml:"users"`
+}
+
+type Defaults struct {
+	ColorScheme string `toml:"color-scheme"`
+	Pattern     string `toml:"pattern"`
+}
+
+type UserConfig struct {
+	Id          string `toml:"id"`
+	Alias       string `toml:"alias"`
+	ColorScheme string `toml:"color-scheme"`
+	Pattern     string `toml:"pattern"`
+}
+
+var (
+	config Config
+)
+
+func configure(configFile string) {
+	if file, err := os.OpenFile(configFile, os.O_RDONLY, 0); err == nil {
+		c := &Config{}
+		_, err := toml.NewDecoder(file).Decode(c)
+		if err != nil {
+			log.Printf("Invalid config file '%s' - ignore it.\n", configFile)
+		}
+
+		defer file.Close()
+		config = *c
+	}
+
+	if os.Getenv("COLORSCHEME") != "" {
+		config.Defaults.ColorScheme = os.Getenv("COLORSCHEME")
+	}
+
+	if os.Getenv("PATTERN") != "" {
+		config.Defaults.Pattern = os.Getenv("PATTERN")
+	}
+}
+
 func main() {
+	configFile := flag.String("c", "/etc/idicon/config.toml", "-c <path to config file>")
+	flag.Parse()
+
+	configure(*configFile)
+
 	router := mux.NewRouter()
 	router.HandleFunc("/avatar/{id}", RequestHandler)
 	log.Println("Starting ...")
