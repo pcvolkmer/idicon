@@ -48,6 +48,8 @@ pattern = "github"      # The pattern to be used for this user
 ...
 ....
 
+User specific settings in config file will override any default settings or request params.
+
 If config file is not present, the application will ignore it. Using environment variables will override default settings.
 
 ==== Environment Variables
