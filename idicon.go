@@ -40,7 +40,6 @@ func genGhIcon(id string, size int, f func([16]byte) color.RGBA) *image.NRGBA {
 	if size > 512 {
 		size = 512
 	}
-
 	blocks := 5
 
 	hash := hashBytes(id)
@@ -52,7 +51,7 @@ func genGhIcon(id string, size int, f func([16]byte) color.RGBA) *image.NRGBA {
 			ni := x + blocks*(blocks-y-1)
 			if x+blocks*y > 2*blocks {
 				di := (x + blocks*y) - 2*blocks
-				data[di] = nibbles[ni]%2 == 0
+				data[di] = nibbles[ni%32]%2 == 0
 			}
 		}
 	}
