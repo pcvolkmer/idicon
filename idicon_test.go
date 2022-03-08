@@ -27,7 +27,7 @@ var gh2 []byte
 
 func testRouter() *mux.Router {
 	router := mux.NewRouter()
-	router.HandleFunc("/avatar/{id}", RequestHandler)
+	router.HandleFunc("/avatar/{id}", requestHandler)
 	return router
 }
 
@@ -116,7 +116,7 @@ func TestUsesConfig(t *testing.T) {
 	configure("./testdata/testconfig.toml")
 
 	if config.Defaults.ColorScheme != "gh" ||
-		config.Users[0].Id != "example" ||
+		config.Users[0].ID != "example" ||
 		config.Users[0].Alias != "42" ||
 		config.Users[0].ColorScheme != "gh" ||
 		config.Users[0].Pattern != "github" {
@@ -131,7 +131,7 @@ func TestUsesConfigWithEnvVar(t *testing.T) {
 	configure("./testdata/testconfig.toml")
 
 	if config.Defaults.ColorScheme != "v1" ||
-		config.Users[0].Id != "example" ||
+		config.Users[0].ID != "example" ||
 		config.Users[0].Alias != "42" ||
 		config.Users[0].ColorScheme != "gh" ||
 		config.Users[0].Pattern != "github" {

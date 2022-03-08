@@ -124,7 +124,7 @@ func drawImage(data []bool, blocks int, size int, c color.Color) *image.NRGBA {
 	return img
 }
 
-func RequestHandler(w http.ResponseWriter, r *http.Request) {
+func requestHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
 	size, err := strconv.Atoi(r.URL.Query().Get("s"))
@@ -143,7 +143,7 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, userConfig := range config.Users {
-		if hashBytes(id) == hashBytes(userConfig.Id) {
+		if hashBytes(id) == hashBytes(userConfig.ID) {
 			id = userConfig.Alias
 			if len(userConfig.ColorScheme) > 0 {
 				colorScheme = userConfig.ColorScheme
@@ -168,23 +168,6 @@ func RequestHandler(w http.ResponseWriter, r *http.Request) {
 		err = png.Encode(w, genIdIcon(id, size, cFunc))
 	}
 
-}
-
-type Config struct {
-	Defaults Defaults     `toml:"defaults"`
-	Users    []UserConfig `toml:"users"`
-}
-
-type Defaults struct {
-	ColorScheme string `toml:"color-scheme"`
-	Pattern     string `toml:"pattern"`
-}
-
-type UserConfig struct {
-	Id          string `toml:"id"`
-	Alias       string `toml:"alias"`
-	ColorScheme string `toml:"color-scheme"`
-	Pattern     string `toml:"pattern"`
 }
 
 var (
@@ -219,7 +202,7 @@ func main() {
 	configure(*configFile)
 
 	router := mux.NewRouter()
-	router.HandleFunc("/avatar/{id}", RequestHandler)
+	router.HandleFunc("/avatar/{id}", requestHandler)
 	log.Println("Starting ...")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
