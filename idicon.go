@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"flag"
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -196,13 +197,15 @@ func configure(configFile string) {
 }
 
 func main() {
-	configFile := flag.String("c", "/etc/idicon/config.toml", "-c <path to config file>")
+	configFile := flag.String("c", "/etc/idicon/config.toml", "path to config file")
+	port := flag.Int("p", 8000, "server port")
+
 	flag.Parse()
 
 	configure(*configFile)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/avatar/{id}", requestHandler)
-	log.Println("Starting ...")
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Println(fmt.Sprintf("Starting on port %d ...", *port))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), router))
 }

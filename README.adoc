@@ -4,6 +4,17 @@ Simple implementation of an identicon service.
 
 == Usage
 
+=== Start application
+
+The application takes two optional arguments to specify the location of the config file and the port the application
+is listening. The following example shows the default values used if no arguments used.
+
+....
+$ idicon -c /etc/idicon/config.toml -p 8000
+....
+
+=== Client side
+
 HTTP `GET` is used to request an identicon image.
 
 ....
