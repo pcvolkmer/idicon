@@ -10,7 +10,7 @@ import (
 )
 
 type IconGenerator interface {
-	GenIcon(id string, size int, f func([16]byte) color.RGBA) *image.NRGBA
+	GenIcon(id string, size int) *image.NRGBA
 }
 
 func HashBytes(id string) [16]byte {

@@ -53,13 +53,12 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 
 	var iconGenerator icons.IconGenerator
 	if pattern == "github" {
-		iconGenerator = &icons.GhIconGenerator{}
-
+		iconGenerator = icons.NewGhIconGenerator().WithColorGenerator(cFunc)
 	} else {
-		iconGenerator = &icons.IdIconGenerator{}
+		iconGenerator = icons.NewIdIconGenerator().WithColorGenerator(cFunc)
 	}
 
-	err = png.Encode(w, iconGenerator.GenIcon(id, size, cFunc))
+	err = png.Encode(w, iconGenerator.GenIcon(id, size))
 }
 
 var (

@@ -6,10 +6,20 @@ import (
 )
 
 type GhIconGenerator struct {
+	colorGenerator func([16]byte) color.RGBA
+}
+
+func NewGhIconGenerator() *GhIconGenerator {
+	return &GhIconGenerator{}
+}
+
+func (generator *GhIconGenerator) WithColorGenerator(colorGenerator func([16]byte) color.RGBA) *GhIconGenerator {
+	generator.colorGenerator = colorGenerator
+	return generator
 }
 
 // Based on https://github.com/dgraham/identicon
-func (generator *GhIconGenerator) GenIcon(id string, size int, f func([16]byte) color.RGBA) *image.NRGBA {
+func (generator *GhIconGenerator) GenIcon(id string, size int) *image.NRGBA {
 	if size > 512 {
 		size = 512
 	}
@@ -29,7 +39,7 @@ func (generator *GhIconGenerator) GenIcon(id string, size int, f func([16]byte) 
 		}
 	}
 
-	return drawImage(mirrorData(data, blocks), blocks, size, f(hash))
+	return drawImage(mirrorData(data, blocks), blocks, size, generator.colorGenerator(hash))
 }
 
 // https://processing.org/reference/map_.html

@@ -7,9 +7,19 @@ import (
 )
 
 type IdIconGenerator struct {
+	colorGenerator func([16]byte) color.RGBA
 }
 
-func (generator *IdIconGenerator) GenIcon(id string, size int, f func([16]byte) color.RGBA) *image.NRGBA {
+func NewIdIconGenerator() *IdIconGenerator {
+	return &IdIconGenerator{}
+}
+
+func (generator *IdIconGenerator) WithColorGenerator(colorGenerator func([16]byte) color.RGBA) *IdIconGenerator {
+	generator.colorGenerator = colorGenerator
+	return generator
+}
+
+func (generator *IdIconGenerator) GenIcon(id string, size int) *image.NRGBA {
 	id = strings.ToLower(id)
 	blocks := 5
 	if size > 512 {
@@ -21,7 +31,7 @@ func (generator *IdIconGenerator) GenIcon(id string, size int, f func([16]byte) 
 	for i := 0; i < len(hash)-1; i++ {
 		data[i] = hash[i]%2 != hash[i+1]%2
 	}
-	return drawImage(mirrorData(data, blocks), blocks, size, f(hash))
+	return drawImage(mirrorData(data, blocks), blocks, size, generator.colorGenerator(hash))
 }
 
 func ColorV1(hash [16]byte) color.RGBA {
