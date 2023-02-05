@@ -85,6 +85,20 @@ func TestCorrectResponseForGHColorSchemeAndPattern(t *testing.T) {
 	}
 }
 
+func TestCorrectResponseForAltGHColorSchemeAndPattern(t *testing.T) {
+	req, err := http.NewRequest("GET", "/avatar/1a79a4d60de6718e8e5b326e338ae533?c=github&d=gh", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	testRouter().ServeHTTP(rr, req)
+
+	if !reflect.DeepEqual(rr.Body.Bytes(), gh1) {
+		t.Errorf("returned image does not match expected image")
+	}
+}
+
 func TestUsesConfig(t *testing.T) {
 	configure("./testdata/testconfig.toml")
 

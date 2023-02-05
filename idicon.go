@@ -47,12 +47,12 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	cFunc := icons.ColorV2
 	if colorScheme == "v1" {
 		cFunc = icons.ColorV1
-	} else if colorScheme == "gh" {
+	} else if colorScheme == "gh" || colorScheme == "github" {
 		cFunc = icons.ColorGh
 	}
 
 	var iconGenerator icons.IconGenerator
-	if pattern == "github" {
+	if pattern == "github" || pattern == "gh" {
 		iconGenerator = icons.NewGhIconGenerator().WithColorGenerator(cFunc)
 	} else {
 		iconGenerator = icons.NewIdIconGenerator().WithColorGenerator(cFunc)
