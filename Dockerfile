@@ -21,6 +21,10 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app -ldflags '-w -s'
 
 FROM scratch
 
+LABEL org.opencontainers.image.source = "https://github.com/pcvolkmer/idicon"
+LABEL org.opencontainers.image.licenses = "MIT"
+LABEL org.opencontainers.image.description = "Simple identicon service"
+
 COPY --from=build-env /etc/passwd /etc/passwd
 COPY --from=build-env /etc/group /etc/group
 COPY --from=build-env /tmp/build/app /idicon
