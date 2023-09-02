@@ -69,8 +69,10 @@ func configure(configFile string) {
 	if file, err := os.OpenFile(configFile, os.O_RDONLY, 0); err == nil {
 		c := &Config{}
 		_, err := toml.NewDecoder(file).Decode(c)
-		if err != nil {
-			log.Printf("Invalid config file '%s' - ignore it.\n", configFile)
+		if err == nil {
+			log.Printf("Using configuration file '%s'", configFile)
+		} else {
+			log.Printf("Invalid configuration file '%s' - ignore it.\n", configFile)
 		}
 
 		defer file.Close()
@@ -96,6 +98,6 @@ func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/avatar/{id}", requestHandler)
-	log.Println(fmt.Sprintf("Starting on port %d ...", *port))
+	log.Printf("Starting on port %d ...\n", *port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), router))
 }
