@@ -1,17 +1,5 @@
 FROM golang:1.20-alpine AS build-env
 
-ENV USER=appuser
-ENV UID=8000
-
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/null" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    "${USER}"
-
 WORKDIR /tmp/build
 ADD . /tmp/build
 # -ldlflags '-s' to strip binary
@@ -21,15 +9,13 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o app -ldflags '-w -s'
 
 FROM scratch
 
-LABEL org.opencontainers.image.source = "https://github.com/pcvolkmer/idicon"
-LABEL org.opencontainers.image.licenses = "MIT"
-LABEL org.opencontainers.image.description = "Simple identicon service"
+LABEL org.opencontainers.image.source="https://github.com/pcvolkmer/idicon"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.description="Simple identicon service"
 
-COPY --from=build-env /etc/passwd /etc/passwd
-COPY --from=build-env /etc/group /etc/group
 COPY --from=build-env /tmp/build/app /idicon
 
-USER appuser:appuser
+USER 8000:8000
 
 EXPOSE 8000
 
