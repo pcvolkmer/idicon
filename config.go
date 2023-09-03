@@ -20,4 +20,5 @@ type UserConfig struct {
 	Alias       string `toml:"alias"`
 	ColorScheme string `toml:"color-scheme"`
 	Pattern     string `toml:"pattern"`
+	Redirect    string `toml:"redirect"`
 }

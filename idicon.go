@@ -33,6 +33,12 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, userConfig := range config.Users {
 		if icons.HashBytes(id) == icons.HashBytes(userConfig.ID) {
+			if userConfig.Redirect != "" {
+				w.Header().Add("Location", userConfig.Redirect)
+				w.WriteHeader(http.StatusFound)
+				return
+			}
+
 			id = userConfig.Alias
 			if len(userConfig.ColorScheme) > 0 {
 				colorScheme = userConfig.ColorScheme

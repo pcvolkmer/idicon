@@ -6,3 +6,7 @@ id = "example"
 alias = "42"
 color-scheme = "gh"
 pattern = "github"
+
+[[users]]
+id = "example2"
+redirect = "https://avatars.example.com/u/42"

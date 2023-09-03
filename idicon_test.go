@@ -141,3 +141,23 @@ func TestCorrectResponseForUserConfig(t *testing.T) {
 		t.Errorf("returned image does not match expected image for mapped alias '42'")
 	}
 }
+
+func TestCorrectRedirect(t *testing.T) {
+	configure("./testdata/testconfig.toml")
+
+	req, err := http.NewRequest("GET", "/avatar/example2", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	testRouter().ServeHTTP(rr, req)
+
+	if code := rr.Code; code != http.StatusFound {
+		t.Errorf("response code match: got %d want %d", code, http.StatusFound)
+	}
+
+	if location := rr.Header().Get("Location"); location != "https://avatars.example.com/u/42" {
+		t.Errorf("location header does not match: got %v want https://avatars.example.com/u/42", location)
+	}
+}
