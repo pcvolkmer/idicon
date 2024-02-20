@@ -16,13 +16,14 @@ type IconGenerator interface {
 func HashBytes(id string) [16]byte {
 	hash := [16]byte{}
 	md5RegExp := regexp.MustCompile("[a-f0-9]{32}")
-	if !md5RegExp.Match([]byte(id)) {
-		hash = md5.Sum([]byte(id))
-	} else {
+	if len(id) == 16 && md5RegExp.MatchString(id) {
 		dec, _ := hex.DecodeString(id)
 		for idx, b := range dec {
+			print(idx)
 			hash[idx] = b
 		}
+	} else {
+		hash = md5.Sum([]byte(id))
 	}
 	return hash
 }
