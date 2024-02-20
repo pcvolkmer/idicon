@@ -7,6 +7,7 @@ import (
 	"image/color"
 	"image/draw"
 	"regexp"
+	"strings"
 )
 
 type IconGenerator interface {
@@ -16,14 +17,14 @@ type IconGenerator interface {
 func HashBytes(id string) [16]byte {
 	hash := [16]byte{}
 	md5RegExp := regexp.MustCompile("[a-f0-9]{32}")
-	if len(id) == 16 && md5RegExp.MatchString(id) {
+	if len(id) == 32 && md5RegExp.MatchString(strings.ToLower(id)) {
 		dec, _ := hex.DecodeString(id)
 		for idx, b := range dec {
 			print(idx)
 			hash[idx] = b
 		}
 	} else {
-		hash = md5.Sum([]byte(id))
+		hash = md5.Sum([]byte(strings.ToLower(id)))
 	}
 	return hash
 }
