@@ -112,8 +112,8 @@ func TestUsesConfig(t *testing.T) {
 }
 
 func TestUsesConfigWithEnvVar(t *testing.T) {
-	os.Setenv("COLORSCHEME", "v1")
-	os.Setenv("PATTERN", "default")
+	_ = os.Setenv("COLORSCHEME", "v1")
+	_ = os.Setenv("PATTERN", "default")
 
 	configure("./testdata/testconfig.toml")
 

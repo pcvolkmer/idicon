@@ -46,7 +46,7 @@ func ColorV1(hash [16]byte) color.RGBA {
 	} else if b > r && b > g {
 		b += 48
 	}
-	return color.RGBA{r, g, b, 255}
+	return color.RGBA{R: r, G: g, B: b, A: 255}
 }
 
 func ColorV2(hash [16]byte) color.RGBA {

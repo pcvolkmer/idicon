@@ -31,10 +31,10 @@ func HashBytes(id string) [16]byte {
 
 func mirrorData(data []bool, blocks int) []bool {
 	for x := 0; x < blocks; x++ {
-		min := x*blocks + 1
+		minBlock := x*blocks + 1
 		for y := 0; y < blocks; y++ {
 			a := ((blocks - x - 1) * blocks) + y
-			b := min + y - 1
+			b := minBlock + y - 1
 			if data[a] {
 				data[b] = true
 			}
@@ -46,7 +46,7 @@ func mirrorData(data []bool, blocks int) []bool {
 func drawImage(data []bool, blocks int, size int, c color.Color) *image.NRGBA {
 	img := image.NewNRGBA(image.Rect(0, 0, size, size))
 
-	draw.Draw(img, img.Bounds(), &image.Uniform{color.Gray{240}}, image.Point{0, 0}, draw.Src)
+	draw.Draw(img, img.Bounds(), &image.Uniform{C: color.Gray{Y: 240}}, image.Point{X: 0, Y: 0}, draw.Src)
 
 	blockSize := size / (blocks + 1)
 	border := (size - (blocks * blockSize)) / 2

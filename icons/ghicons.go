@@ -87,10 +87,10 @@ func hslToRgba(hue float32, sat float32, lum float32) color.RGBA {
 	t1 := lum*2.0 - t2
 
 	return color.RGBA{
-		uint8(hueToRgb(t1, t2, hue+1.0/3.0) * 255),
-		uint8(hueToRgb(t1, t2, hue) * 255),
-		uint8(hueToRgb(t1, t2, hue-1.0/3.0) * 255),
-		0xff,
+		R: uint8(hueToRgb(t1, t2, hue+1.0/3.0) * 255),
+		G: uint8(hueToRgb(t1, t2, hue) * 255),
+		B: uint8(hueToRgb(t1, t2, hue-1.0/3.0) * 255),
+		A: 0xff,
 	}
 }
 
