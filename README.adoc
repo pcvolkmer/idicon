@@ -6,8 +6,8 @@ Simple implementation of an identicon service.
 
 === Start application
 
-The application takes two optional arguments to specify the location of the config file and the port the application
-is listening. The following example shows the default values used if no arguments used.
+The application takes two optional arguments to specify the location of the config file and the port the application is listening.
+The following example shows the default values used if no arguments used.
 
 ....
 $ idicon -c /etc/idicon/config.toml -p 8000
@@ -21,14 +21,32 @@ HTTP `GET` is used to request an identicon image.
 curl http://localhost:8000/avatar/23463b99b62a72f26ed677cc556c44e8?s=100&c=v2
 ....
 
-Instead of requesting identicons for MD5 hashes of usernames or mail addresses, it is possible to use plain username and mail address. This will result in the same generated identicon.
+Instead of requesting identicons for MD5 hashes of usernames or mail addresses, it is possible to use plain username and mail address.
+This will result in the same generated identicon.
 
-Use request query parameter `s` to request images with specified size. Default value is 80px. The size is limited to a maximum value of 512px.
+Use request query parameter `s` or `size` to request images with specified size.
+Default value is 80px.
+The size is limited to a maximum value of 512px.
 
-Query parameter `c` will set color scheme. Available values are `v1`, `v2` and `gh`.
+Query parameter `c` will set color scheme.
+Available values are `v1`, `v2` and `gh`.
 The latter resembles the color scheme used by GitHub.
 
 The request query parameter `d` can be used to request GitHub like patterns by setting the value to `github`.
+
+==== Examples
+
+Some examples for `/avatar/example` and different params.
+
+|===
+| ..?c=v1 | ..?c=v2 | ..?c=v2&s=40 | ..?c=gh&d=gh
+
+a|image::testdata/1a79a4d60de6718e8e5b326e338ae533_v1.png[]
+a|image::testdata/1a79a4d60de6718e8e5b326e338ae533_v2.png[]
+a|image::testdata/1a79a4d60de6718e8e5b326e338ae533_s40.png[]
+a|image::testdata/1a79a4d60de6718e8e5b326e338ae533_gh.png[]
+
+|===
 
 === Configuration
 
@@ -39,6 +57,7 @@ Configuration is available by using a config file or by using environment variab
 If config file `/etc/identicon/config.toml` exists, its configuration will be used on application start.
 
 Use application argument `-c` to use another file.
+
 ....
 $ identicon -c ./config.toml
 ....
@@ -61,11 +80,13 @@ pattern = "github"      # The pattern to be used for this user
 
 User specific settings in config file will override any default settings or request params.
 
-If config file is not present, the application will ignore it. Using environment variables will override default settings.
+If config file is not present, the application will ignore it.
+Using environment variables will override default settings.
 
 ==== Environment Variables
 
-You can use `COLORSCHEME` to define the default color scheme to be used. Fallback value will be `v2`.
+You can use `COLORSCHEME` to define the default color scheme to be used.
+Fallback value will be `v2`.
 
 The `PATTERN` environment variable is available to define GitHub like patterns as default by using `github`.
 
