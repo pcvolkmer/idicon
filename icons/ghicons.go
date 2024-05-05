@@ -32,7 +32,7 @@ func (generator *GhIconGenerator) GenIcon(id string, size int) *image.NRGBA {
 	for x := 0; x < blocks; x++ {
 		for y := 0; y < blocks; y++ {
 			ni := x + blocks*(blocks-y-1)
-			if x+blocks*y > 2*blocks {
+			if x+blocks*y >= 2*blocks {
 				di := (x + blocks*y) - 2*blocks
 				data[di] = nibbles[ni%32]%2 == 0
 			}
