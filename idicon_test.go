@@ -23,6 +23,9 @@ var gh1 []byte
 //go:embed testdata/a1d0c6e83f027327d8461063f4ac58a6_gh.png
 var gh2 []byte
 
+//go:embed testdata/1a79a4d60de6718e8e5b326e338ae533_s40.png
+var s40 []byte
+
 func testRouter() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/avatar/{id}", requestHandler)
@@ -95,6 +98,34 @@ func TestCorrectResponseForAltGHColorSchemeAndPattern(t *testing.T) {
 	testRouter().ServeHTTP(rr, req)
 
 	if !reflect.DeepEqual(rr.Body.Bytes(), gh1) {
+		t.Errorf("returned image does not match expected image")
+	}
+}
+
+func TestCorrectResponseForSParam40(t *testing.T) {
+	req, err := http.NewRequest("GET", "/avatar/1a79a4d60de6718e8e5b326e338ae533?s=40", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	testRouter().ServeHTTP(rr, req)
+
+	if !reflect.DeepEqual(rr.Body.Bytes(), s40) {
+		t.Errorf("returned image does not match expected image")
+	}
+}
+
+func TestCorrectResponseForSizeParam40(t *testing.T) {
+	req, err := http.NewRequest("GET", "/avatar/1a79a4d60de6718e8e5b326e338ae533?size=40", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	testRouter().ServeHTTP(rr, req)
+
+	if !reflect.DeepEqual(rr.Body.Bytes(), s40) {
 		t.Errorf("returned image does not match expected image")
 	}
 }

@@ -18,7 +18,10 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 
 	size, err := strconv.Atoi(r.URL.Query().Get("s"))
 	if err != nil {
-		size = 80
+		size, err = strconv.Atoi(r.URL.Query().Get("size"))
+		if err != nil {
+			size = 80
+		}
 	}
 
 	colorScheme := r.URL.Query().Get("c")
