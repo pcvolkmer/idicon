@@ -42,6 +42,29 @@ func (generator *GhIconGenerator) GenIcon(id string, size int) *image.NRGBA {
 	return drawImage(mirrorData(data, blocks), blocks, size, generator.colorGenerator(hash))
 }
 
+func (generator *GhIconGenerator) GenSvg(id string, size int) string {
+	if size > 512 {
+		size = 512
+	}
+	blocks := 5
+
+	hash := HashBytes(id)
+	nibbles := nibbles(hash)
+	data := make([]bool, blocks*blocks)
+
+	for x := 0; x < blocks; x++ {
+		for y := 0; y < blocks; y++ {
+			ni := x + blocks*(blocks-y-1)
+			if x+blocks*y >= 2*blocks {
+				di := (x + blocks*y) - 2*blocks
+				data[di] = nibbles[ni%32]%2 == 0
+			}
+		}
+	}
+
+	return drawSvg(mirrorData(data, blocks), blocks, size, generator.colorGenerator(hash))
+}
+
 // https://processing.org/reference/map_.html
 func remap(value uint32, vmin uint32, vmax uint32, dmin uint32, dmax uint32) float32 {
 	return float32((value-vmin)*(dmax-dmin)) / float32((vmax-vmin)+dmin)

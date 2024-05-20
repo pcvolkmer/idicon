@@ -34,6 +34,8 @@ The latter resembles the color scheme used by GitHub.
 
 The request query parameter `d` can be used to request GitHub like patterns by setting the value to `github`.
 
+Using query param `ct` with value `svg` or using request header `Accept: image/svg+xml` will generate SVG identicon.
+
 ==== Examples
 
 Some examples for `/avatar/example` and different params.

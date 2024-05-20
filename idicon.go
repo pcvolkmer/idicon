@@ -62,7 +62,6 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	w.Header().Add("Content-Type", "image/png")
 	cFunc := icons.ColorV2
 	if colorScheme == "v1" {
 		cFunc = icons.ColorV1
@@ -77,7 +76,15 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		iconGenerator = icons.NewIdIconGenerator().WithColorGenerator(cFunc)
 	}
 
-	err = png.Encode(w, iconGenerator.GenIcon(id, size))
+	ct := r.URL.Query().Get("ct")
+	cth := r.Header.Get("Accept")
+	if ct == "svg" || cth == "image/svg+xml" {
+		w.Header().Add("Content-Type", "image/svg+xml")
+		_, err = w.Write([]byte(iconGenerator.GenSvg(id, size)))
+	} else {
+		w.Header().Add("Content-Type", "image/png")
+		err = png.Encode(w, iconGenerator.GenIcon(id, size))
+	}
 }
 
 var (

@@ -108,18 +108,18 @@
             width: 90%;
         }
 
-        #size-input, #color-input, #type-input {
+        #size-input, #color-input, #type-input, #contenttype-input {
             display: flex;
             flex-direction: column;
             margin: 0 auto;
         }
 
-        #size-input > input, #color-input > select, #type-input > select {
+        #size-input > input, #color-input > select, #type-input > select, #contenttype-input > select {
             width: 8em;
         }
 
         #settings {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             display: grid;
         }
 
@@ -185,6 +185,13 @@
                     <option value="gh" selected>GH</option>
                 </select>
             </div>
+            <div id="contenttype-input" class="small">
+                <label for="contenttype">Content-Type</label>
+                <select id="contenttype" onchange="newcontenttype(this.value)">
+                    <option value="png" selected>PNG</option>
+                    <option value="svg">SVG</option>
+                </select>
+            </div>
         </fieldset>
         <fieldset id="actions">
             <legend>Actions</legend>
@@ -212,6 +219,7 @@
     let currentsize = document.getElementById('size').value;
     let currentcolor = document.getElementById('color').value;
     let currenttype = document.getElementById('type').value;
+    let currentcontenttype = document.getElementById('contenttype').value;
     idicon(document.getElementById('value').value);
 
     function fetchGhId() {
@@ -253,12 +261,17 @@
         idicon(document.getElementById('value').value);
     }
 
+    function newcontenttype(value) {
+        currentcontenttype = value;
+        idicon(document.getElementById('value').value);
+    }
+
     function idicon(value) {
         if (value.trim() === '') {
             document.getElementById('idicon').src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIAAAUAAeImBZsAAAAASUVORK5CYII=';
             return;
         }
-        document.getElementById('idicon').src = `./avatar/${value}?s=${currentsize}&c=${currentcolor}&d=${currenttype}`
+        document.getElementById('idicon').src = `./avatar/${value}?s=${currentsize}&c=${currentcolor}&d=${currenttype}&ct=${currentcontenttype}`
     }
 </script>
 </html>

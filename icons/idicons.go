@@ -34,6 +34,21 @@ func (generator *IdIconGenerator) GenIcon(id string, size int) *image.NRGBA {
 	return drawImage(mirrorData(data, blocks), blocks, size, generator.colorGenerator(hash))
 }
 
+func (generator *IdIconGenerator) GenSvg(id string, size int) string {
+	id = strings.ToLower(id)
+	blocks := 5
+	if size > 512 {
+		size = 512
+	}
+
+	hash := HashBytes(id)
+	data := make([]bool, blocks*blocks)
+	for i := 0; i < len(hash)-1; i++ {
+		data[i] = hash[i]%2 != hash[i+1]%2
+	}
+	return drawSvg(mirrorData(data, blocks), blocks, size, generator.colorGenerator(hash))
+}
+
 func ColorV1(hash [16]byte) color.RGBA {
 	r := 32 + (hash[0]%16)/2<<4
 	g := 32 + (hash[2]%16)/2<<4

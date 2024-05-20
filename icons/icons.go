@@ -3,6 +3,7 @@ package icons
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -12,6 +13,7 @@ import (
 
 type IconGenerator interface {
 	GenIcon(id string, size int) *image.NRGBA
+	GenSvg(id string, size int) string
 }
 
 func HashBytes(id string) [16]byte {
@@ -62,5 +64,37 @@ func drawImage(data []bool, blocks int, size int, c color.Color) *image.NRGBA {
 		}
 	}
 
+	drawSvg(data, blocks, size, c)
+
 	return img
+}
+
+func drawSvg(data []bool, blocks int, size int, c color.Color) string {
+
+	blockSize := size / (blocks + 1)
+	border := (size - (blocks * blockSize)) / 2
+	r, g, b, _ := c.RGBA()
+	colorHtml := fmt.Sprintf("#%x%x%x", r>>8, g>>8, b>>8)
+
+	blockElems := fmt.Sprintf("<rect style=\"fill:#f0f0f0\" width=\"%d\" height=\"%d\" x=\"0\" y=\"0\" />", size, size)
+
+	for x := 0; x < blocks; x++ {
+		for y := 0; y < blocks; y++ {
+			idx := x*blocks + y
+			if data[idx] {
+				blockElems += fmt.Sprintf(
+					`<rect style="fill:%s" width="%d" height="%d" x="%d" y="%d" />`,
+					colorHtml,
+					blockSize,
+					blockSize,
+					border+(x*blockSize),
+					border+(y*blockSize))
+			}
+		}
+	}
+
+	return fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+<svg width="%d" height="%d" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><g>%s</g></svg>`,
+		size, size,
+		blockElems)
 }
