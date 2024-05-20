@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"github.com/BurntSushi/toml"
@@ -12,6 +13,15 @@ import (
 	"os"
 	"strconv"
 )
+
+//go:embed static
+var static embed.FS
+
+func pageRequestHandler(w http.ResponseWriter, _ *http.Request) {
+	p, _ := static.ReadFile("static/index.html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_, _ = w.Write(p)
+}
 
 func requestHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
@@ -106,6 +116,7 @@ func main() {
 	configure(*configFile)
 
 	router := mux.NewRouter()
+	router.HandleFunc("/avatar", pageRequestHandler)
 	router.HandleFunc("/avatar/{id}", requestHandler)
 	log.Printf("Starting on port %d ...\n", *port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), router))
