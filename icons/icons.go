@@ -64,8 +64,6 @@ func drawImage(data []bool, blocks int, size int, c color.Color) *image.NRGBA {
 		}
 	}
 
-	drawSvg(data, blocks, size, c)
-
 	return img
 }
 
