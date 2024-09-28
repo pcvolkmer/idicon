@@ -83,7 +83,7 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "image/svg+xml")
 		_, err = w.Write([]byte(iconGenerator.GenSvg(id, size)))
 	} else if ct == "jpeg" || cth == "image/jpeg" {
-		w.Header().Add("Content-Type", "image/webp")
+		w.Header().Add("Content-Type", "image/jpeg")
 		err = jpeg.Encode(w, iconGenerator.GenIcon(id, size), nil)
 	} else {
 		w.Header().Add("Content-Type", "image/png")
