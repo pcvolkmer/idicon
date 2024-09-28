@@ -7,6 +7,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/gorilla/mux"
 	"idicon/icons"
+	"image/gif"
 	"image/jpeg"
 	"image/png"
 	"log"
@@ -85,6 +86,9 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	} else if ct == "jpeg" || cth == "image/jpeg" {
 		w.Header().Add("Content-Type", "image/jpeg")
 		err = jpeg.Encode(w, iconGenerator.GenIcon(id, size), nil)
+	} else if ct == "gif" || cth == "image/gif" {
+		w.Header().Add("Content-Type", "image/gif")
+		err = gif.Encode(w, iconGenerator.GenIcon(id, size), nil)
 	} else {
 		w.Header().Add("Content-Type", "image/png")
 		err = png.Encode(w, iconGenerator.GenIcon(id, size))
