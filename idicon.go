@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/BurntSushi/toml"
-	"github.com/gorilla/mux"
 	"idicon/icons"
 	"image/gif"
 	"image/jpeg"
@@ -26,7 +25,7 @@ func pageRequestHandler(w http.ResponseWriter, _ *http.Request) {
 }
 
 func requestHandler(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
+	id := r.PathValue("id")
 
 	size, err := strconv.Atoi(r.URL.Query().Get("s"))
 	if err != nil {
@@ -135,9 +134,9 @@ func main() {
 
 	configure(*configFile)
 
-	router := mux.NewRouter()
-	router.HandleFunc("/avatar", pageRequestHandler)
-	router.HandleFunc("/avatar/{id}", requestHandler)
+	router := http.NewServeMux()
+	router.HandleFunc("GET /avatar", pageRequestHandler)
+	router.HandleFunc("GET /avatar/{id}", requestHandler)
 	log.Printf("Starting on port %d ...\n", *port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), router))
 }

@@ -7,8 +7,6 @@ import (
 	"os"
 	"reflect"
 	"testing"
-
-	"github.com/gorilla/mux"
 )
 
 //go:embed testdata/1a79a4d60de6718e8e5b326e338ae533_v1.png
@@ -26,8 +24,8 @@ var gh2 []byte
 //go:embed testdata/1a79a4d60de6718e8e5b326e338ae533_s40.png
 var s40 []byte
 
-func testRouter() *mux.Router {
-	router := mux.NewRouter()
+func testRouter() *http.ServeMux {
+	router := http.NewServeMux()
 	router.HandleFunc("/avatar/{id}", requestHandler)
 	return router
 }
