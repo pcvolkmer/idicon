@@ -109,7 +109,12 @@ func configure(configFile string) {
 			log.Printf("Invalid configuration file '%s' - ignore it.\n", configFile)
 		}
 
-		defer file.Close()
+		defer func(file *os.File) {
+			err := file.Close()
+			if err != nil {
+				log.Printf("Cannot close config file")
+			}
+		}(file)
 		config = *c
 	}
 
